@@ -129,6 +129,18 @@ export default function CampaignDetail({
     setLoading(false);
   }, [campaignId]);
 
+  const stopPolling = useCallback(() => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, []);
+
+  const handleDismissUpload = useCallback(() => {
+    stopPolling();
+    setLiveJob(null);
+  }, [stopPolling]);
+
   useEffect(() => {
     fetchTasks();
   }, [campaignId, fetchTasks]);
@@ -163,12 +175,14 @@ export default function CampaignDetail({
     return () => stopPolling();
   }, [liveJob?.id, liveJob?.status, fetchTasks]);
 
-  function stopPolling() {
-    if (pollRef.current) {
-      clearInterval(pollRef.current);
-      pollRef.current = null;
+  useEffect(() => {
+    if (liveJob?.status === "done") {
+      const timer = setTimeout(() => {
+        handleDismissUpload();
+      }, 2000);
+      return () => clearTimeout(timer);
     }
-  }
+  }, [liveJob?.status, handleDismissUpload]);
 
   async function handleSaveCampaignReward() {
     setCampaignRewardSaving(true);
@@ -287,11 +301,6 @@ export default function CampaignDetail({
       completedAt: null,
       startedAt: null,
     });
-  }
-
-  function handleDismissUpload() {
-    stopPolling();
-    setLiveJob(null);
   }
 
   async function handleDownloadTemplate() {
@@ -585,7 +594,7 @@ export default function CampaignDetail({
 
       <div className="flex items-baseline gap-4">
         {renaming ? (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <input
               type="text"
               value={renameValue}
@@ -596,7 +605,7 @@ export default function CampaignDetail({
                 if (e.key === "Enter") handleSaveRename();
                 if (e.key === "Escape") handleCancelRename();
               }}
-              className="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-headline text-2xl font-extrabold text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="mr-2 rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-1.5 font-headline text-2xl font-extrabold text-on-surface focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button
               type="button"
@@ -642,7 +651,7 @@ export default function CampaignDetail({
           Target: {defaultResponseTarget} responses per task
         </span>
         {campaignRewardEdit ? (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-2">
             <input
               type="text"
               inputMode="decimal"
@@ -655,7 +664,7 @@ export default function CampaignDetail({
             <button
               onClick={handleSaveCampaignReward}
               disabled={campaignRewardSaving}
-              className="flex h-6 w-6 items-center justify-center rounded text-primary transition-colors hover:bg-primary-container"
+              className="flex h-8 w-8 items-center justify-center rounded text-primary transition-colors hover:bg-primary-container"
               title="Save"
             >
               <span className="material-symbols-outlined text-[16px]">check</span>
@@ -665,7 +674,7 @@ export default function CampaignDetail({
                 setCampaignRewardEdit(false);
                 try { setCampaignRewardDisplay(formatUnits(BigInt(rewardWei), REWARD_TOKEN_DECIMALS)); } catch { setCampaignRewardDisplay("0.05"); }
               }}
-              className="flex h-6 w-6 items-center justify-center rounded text-on-surface-variant transition-colors hover:bg-surface-container-high"
+              className="flex h-8 w-8 items-center justify-center rounded text-on-surface-variant transition-colors hover:bg-surface-container-high"
               title="Cancel"
             >
               <span className="material-symbols-outlined text-[16px]">close</span>

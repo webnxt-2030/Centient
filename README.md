@@ -2,7 +2,31 @@
 
 [![CI](https://github.com/kimerran/t2p/actions/workflows/ci.yml/badge.svg)](https://github.com/kimerran/t2p/actions/workflows/ci.yml)
 
-A data labeling platform built on Celo MiniPay, rewarding contributors with cUSD for completing tasks.
+A data labeling platform built on **Stellar**: anyone can connect a Stellar
+wallet, rank AI-generated responses, and instantly earn **native XLM** for
+high-quality human judgment — turning unprocessed model output into
+high-fidelity, alignment-grade training data. Every reward settles on-chain and
+is independently verifiable on [stellar.expert](https://stellar.expert).
+
+The full loop runs end-to-end on **testnet** and is flippable to **mainnet by
+configuration only**.
+
+## How It Works
+
+```
+Contributor connects a Stellar wallet & signs a one-time challenge (identity)
+        ↓
+Centient serves AI response pairs; contributor ranks the better one
+        ↓
+Quality guards validate the submission (gold tasks, rate limiting, spam detection)
+        ↓
+Reward rail submits an instant native-XLM payment via Horizon (daily cap, stroops precision)
+        ↓
+On-chain reconciler confirms the payout — verifiable on stellar.expert
+```
+
+No email, no password, no bank account, and no custody: a contributor's Stellar
+address is both their identity and their payout destination.
 
 ## Tech Stack
 
@@ -10,7 +34,9 @@ A data labeling platform built on Celo MiniPay, rewarding contributors with cUSD
 - **Language:** TypeScript 5.4
 - **Styling:** Tailwind CSS 4
 - **Database:** PostgreSQL with Prisma 7
-- **Blockchain:** Celo via viem 2.x
+- **Blockchain:** Stellar via the Stellar SDK + Horizon
+- **Wallets:** Freighter / Albedo wallet-connect (passwordless, self-custodial)
+- **Reward asset:** Native XLM (testnet → mainnet by configuration)
 
 ## Getting Started
 

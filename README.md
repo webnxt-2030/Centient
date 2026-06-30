@@ -1,4 +1,4 @@
-# Centient
+# Centient-Stellar
 
 [![CI](https://github.com/kimerran/t2p/actions/workflows/ci.yml/badge.svg)](https://github.com/kimerran/t2p/actions/workflows/ci.yml)
 
